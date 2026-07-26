@@ -22,7 +22,7 @@ func main() {
 	// Fututre Flow: load config, load parsheet, validate, build engine, simulation, analytics, export
 
 	// 1. validate parsheet path
-	parsheet, err := parparser.Load("crz.json")
+	parsheet, err := parparser.Load("vik.json")
 	if err != nil {
 		panic(err)
 	}
@@ -41,8 +41,44 @@ func main() {
 	// Result
 	rows := parsheet.Matrix.Y
 	result := reels.GenerateWindow(rows)
+
+	// Print the Grid
 	fmt.Println("Result Matrix: ", result)
-	// for i := 0; i < rows+1; i++ {
-	// 	fmt.Println(result[i])
-	// }
+	for row := 0; row < parsheet.Matrix.Y; row++ {
+		for reel := 0; reel < parsheet.Matrix.X; reel++ {
+			fmt.Printf("%2d ", result[reel][row])
+		}
+		fmt.Println()
+	}
+
+	// Evaluator
+	lineEvaluator := engine.NewLineEvaluator(parsheet)
+
+	// create contex
+	ctx := &engine.SpinContext{
+		Grid:       result,
+		SpinNumber: 1,
+		TotalBet:   0,
+		BetPerLine: 0.01,
+		Multiplier: 1,
+		IsFreeSpin: false,
+	}
+
+	// Evaluate
+	wins := lineEvaluator.Evaluate(ctx)
+
+	// Print winnings
+	if len(wins) == 0 {
+		fmt.Println("No Win")
+	} else {
+		for _, win := range wins {
+			fmt.Printf(
+				"Path=%s Symbol=%d Match=%d Payout=%.2f\n",
+				win.PathID,
+				win.SymbolID,
+				win.MatchCount,
+				win.Payout,
+			)
+		}
+	}
 }

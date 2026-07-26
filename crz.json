@@ -5,6 +5,8 @@
     "x": 4,
     "y": 3
   },
+  "payDirection": "ltr",
+  "minMatchCount": 3,
   "lines": [[1, 1, 1]],
   "linesCount": [1],
   "bets": [
@@ -90,9 +92,9 @@
       "specialType": "",
       "description": "",
       "reelsInstance": {
-        "0": 3,
-        "1": 4,
-        "2": 5,
+        "0": 30,
+        "1": 40,
+        "2": 50,
         "3": 0
       }
     },

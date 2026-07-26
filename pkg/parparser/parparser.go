@@ -7,10 +7,13 @@ import (
 )
 
 type Parsheet struct {
-	ID      string    `json:"id"`
-	Matrix  Matrix    `json:"matrix"`
-	Bets    []float32 `json:"bets"`
-	Symbols []Symbol  `json:"symbols"`
+	ID            string    `json:"id"`
+	Matrix        Matrix    `json:"matrix"`
+	Bets          []float32 `json:"bets"`
+	Lines         [][]int   `json:"lines"`
+	Symbols       []Symbol  `json:"symbols"`
+	MinMatchCount int       `json:"minMatchCount"`
+	PayDirection  string    `json:"payDirection"`
 }
 
 type Matrix struct {
@@ -19,12 +22,11 @@ type Matrix struct {
 }
 
 type Symbol struct {
-	Name           string         `json:"name"`
 	ID             int            `json:"id"`
-	IsSpecialCrz   bool           `json:"isSpecialCrz"`
-	Payout         int            `json:"payout"`
-	SpecialType    string         `json:"specialType"`
+	Name           string         `json:"name"`
 	ReelsInstances map[string]int `json:"reelsInstance"`
+	UseWildSub     bool           `json:"useWildSub"`
+	Multiplier     []int          `json:"multiplier"`
 }
 
 // Load json parsheet
