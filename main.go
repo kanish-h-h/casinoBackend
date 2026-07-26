@@ -29,7 +29,7 @@ func main() {
 
 	// 2. Configure the System
 	cfg := configs.DefaultConfig()
-	cfg.RngType = configs.RNGSeed
+	cfg.RngType = configs.RNGCrypto
 	cfg.Seed = 42
 
 	rng := utils.NewRNG(cfg.RngType, cfg.Seed)
@@ -37,4 +37,12 @@ func main() {
 	// 3. Build Reel Set
 	reels := engine.BuildReelSet(parsheet, rng)
 	fmt.Printf("Reels: %v\n", reels.Strips)
+
+	// Result
+	rows := parsheet.Matrix.Y
+	result := reels.GenerateWindow(rows)
+	fmt.Println("Result Matrix: ", result)
+	// for i := 0; i < rows+1; i++ {
+	// 	fmt.Println(result[i])
+	// }
 }

@@ -12,6 +12,7 @@ import (
 // Keeping RNG encapuslated makes simulations reporducible and thread-safe
 type ReelSet struct {
 	Strips [][]int
+	rng    *rand.Rand
 }
 
 // BuildReelSet converts a PAR sheet's reelInstance data into virtual strips
@@ -42,5 +43,25 @@ func BuildReelSet(sheet *parparser.Parsheet, rng *rand.Rand) *ReelSet {
 		}
 		strips[r] = strip
 	}
-	return &ReelSet{strips}
+	return &ReelSet{strips, rng}
+}
+
+// GenerateWindow returns a random window of symbols for each reel.
+// The 'rows' parameter comes from sheet.Matrix.Y, keeping this method generic
+func (rs *ReelSet) GenerateWindow(rows int) [][]int {
+	result := make([][]int, len(rs.Strips))
+
+	for r, strip := range rs.Strips {
+		// pick a random starting position on the virtual strip
+		startpos := rs.rng.Intn(len(strip))
+
+		// Extract a vertical window, wrapping around if we hit the end
+		window := make([]int, rows)
+		for i := 0; i < rows; i++ {
+			idx := (startpos + i) % len(strip)
+			window[i] = strip[idx]
+		}
+		result[r] = window
+	}
+	return result
 }
