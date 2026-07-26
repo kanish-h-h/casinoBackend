@@ -42,6 +42,15 @@ func main() {
 	rows := parsheet.Matrix.Y
 	result := reels.GenerateWindow(rows)
 
+	// custom result matrix
+	// result := [][]int{
+	// 	{5, 0, 4},
+	// 	{5, 13, 6},
+	// 	{5, 5, 1},
+	// 	{5, 2, 1},
+	// 	{0, 7, 0},
+	// }
+
 	// Print the Grid
 	fmt.Println("Result Matrix: ", result)
 	for row := 0; row < parsheet.Matrix.Y; row++ {
