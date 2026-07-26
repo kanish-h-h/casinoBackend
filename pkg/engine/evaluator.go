@@ -33,7 +33,8 @@ type Evaluator interface {
 
 // LineEvaluator implementation
 type LineEvaluator struct {
-	sheet *parparser.Parsheet
+	sheet     *parparser.Parsheet
+	symbolMap map[int]*parparser.Symbol
 }
 
 func (le *LineEvaluator) Type() string {
@@ -41,13 +42,13 @@ func (le *LineEvaluator) Type() string {
 }
 
 // Evaluate checks every payline in the sheet against the grid
+// Evaluates entire screen (grid)
 func (le *LineEvaluator) Evaluate(ctx *SpinContext) []Win {
 	var wins []Win
 
 	// Pre-Build symbol map for O(1) lookups during evaluation
-	symbolMap := make(map[int]*parparser.Symbol)
 	for i := range le.sheet.Symbols {
-		symbolMap[le.sheet.Symbols[i].ID] = &le.sheet.Symbols[i]
+		le.symbolMap[le.sheet.Symbols[i].ID] = &le.sheet.Symbols[i]
 	}
 
 	// Determine pay direction
@@ -84,7 +85,7 @@ func (le *LineEvaluator) Evaluate(ctx *SpinContext) []Win {
 				}
 			}
 
-			win := le.checkLineWin(symbols, symbolMap, le.sheet.MinMatchCount, ctx.BetPerLine, lineIdx, dir)
+			win := le.checkLineWin(symbols, le.symbolMap, le.sheet.MinMatchCount, ctx.BetPerLine, lineIdx, dir)
 			if win != nil {
 				wins = append(wins, *win)
 			}
@@ -95,6 +96,7 @@ func (le *LineEvaluator) Evaluate(ctx *SpinContext) []Win {
 }
 
 // checkLineWin evaluates a single array of symbols for a consecutive match.
+// evaluates single payline
 func (le *LineEvaluator) checkLineWin(symbols []int, symbolMap map[int]*parparser.Symbol, minMatch int, betPerLine float64, lineIdx int, direction string) *Win {
 	if len(symbols) == 0 {
 		return nil
@@ -161,6 +163,7 @@ func (le *LineEvaluator) checkLineWin(symbols []int, symbolMap map[int]*parparse
 	}
 }
 
+// NewLineEvaluator build the evaluator
 func NewLineEvaluator(sheet *parparser.Parsheet) *LineEvaluator {
 	return &LineEvaluator{
 		sheet: sheet,
